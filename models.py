@@ -67,7 +67,11 @@ class TimetablePlannerAction(Action):
     start_slot: Optional[Any] = Field(default=None, description="Start slot index (0-based)")
     room_id: Optional[Any] = Field(
         default=None,
-        description="Room identifier (for assign/move), or target session id (for swap_sessions)",
+        description="Room identifier (for assign/move)",
+    )
+    target_session_id: Optional[Any] = Field(
+        default=None,
+        description="Target session id (for swap_sessions)",
     )
 
 

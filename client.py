@@ -12,7 +12,10 @@ from openenv.core import EnvClient
 from openenv.core.client_types import StepResult
 from openenv.core.env_server.types import State
 
-from models import TimetablePlannerAction, TimetablePlannerObservation
+try:
+    from .models import TimetablePlannerAction, TimetablePlannerObservation
+except ImportError:
+    from models import TimetablePlannerAction, TimetablePlannerObservation
 
 
 class TimetablePlannerEnv(
@@ -47,6 +50,8 @@ class TimetablePlannerEnv(
             payload["start_slot"] = action.start_slot
         if action.room_id is not None:
             payload["room_id"] = action.room_id
+        if action.target_session_id is not None:
+            payload["target_session_id"] = action.target_session_id
         return payload
 
     def _parse_result(self, payload: Dict) -> StepResult[TimetablePlannerObservation]:

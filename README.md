@@ -44,16 +44,17 @@ Use one of the following `action_type` values:
 
 1. `assign_session` — place an **unassigned** session at (day, start_slot, room_id)
 2. `move_session` — relocate an **already assigned** session to a new slot/room
-3. `swap_sessions` — exchange time-slots of two assigned sessions (pass `session_id` and target session id via `room_id`)
+3. `swap_sessions` — exchange time-slots of two assigned sessions (pass `session_id` and `target_session_id`)
 4. `unassign_session` — remove a session from the timetable
 5. `submit_timetable` — end the episode (bonus reward if score ≥ 0.90)
 
 Payload fields:
 
 - `session_id`: required for assign/move/unassign/swap
+- `target_session_id`: required for swap
 - `day`: required for assign/move
 - `start_slot`: required for assign/move
-- `room_id`: required for assign/move; for `swap_sessions` this is the target session id
+- `room_id`: required for assign/move
 
 ## Observation
 
@@ -74,7 +75,7 @@ The environment provides raw state and reward only — no strategy hints. The ag
 
 ## Tasks
 
-The environment includes 9 hand-crafted scenarios plus 6 procedurally generated ones (deterministic seeds). Scenarios cycle round-robin on each `reset()`.
+The environment includes 12 hand-crafted scenarios (including `medium_lab_block_v1` and `hard_room_outage_v1`) plus 6 procedurally generated ones (deterministic seeds). Scenarios cycle round-robin on each `reset()`.
 
 - **Easy** (step budget 20–25): overlap constraints only, all slots available
 - **Medium** (step budget 30–35): adds room type/capacity, teacher/room availability, and teacher preferred slots (soft constraint)
@@ -95,6 +96,11 @@ Scores are deterministic in [0.0, 1.0] and combine 8 sub-scores:
 | stability_score | — | — | 15% |
 
 Reward is `current_score - previous_score` with small penalties for invalid (-0.02) or no-op (-0.01) actions.
+
+Notes:
+- `compactness_score` is computed only over teacher/group day pairs with ≥2 scheduled sessions.
+- `room_fit_score` is computed only over assignments that already satisfy room type and capacity.
+- `stability_score` gives 1.0 for unchanged baseline placements, 0.5 for moved placements, and 0.0 for unassigned baseline sessions.
 
 ## Running Inference
 
@@ -148,6 +154,13 @@ The script emits structured lines for automated parsing:
 ```bash
 cd timetable_planner
 PYTHONPATH=. .venv/bin/python -m pytest tests/ -v
+```
+
+### Smoke Test
+
+```bash
+cd timetable_planner
+bash scripts/smoke_test.sh
 ```
 
 ## Building the Docker Image

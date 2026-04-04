@@ -177,10 +177,14 @@ class TestSubScores:
     def test_stability_changed(self):
         baseline = {"s1": {"day": 0, "start_slot": 0, "room_id": "R1"}}
         current = {"s1": {"day": 1, "start_slot": 0, "room_id": "R1"}}
-        assert compute_stability_score(current, baseline) == 0.0
+        assert compute_stability_score(current, baseline) == 0.5
 
     def test_stability_no_baseline(self):
         assert compute_stability_score({}, {}) == 1.0
+
+    def test_stability_unassigned(self):
+        baseline = {"s1": {"day": 0, "start_slot": 0, "room_id": "R1"}}
+        assert compute_stability_score({}, baseline) == 0.0
 
 
 # ---------------------------------------------------------------------------

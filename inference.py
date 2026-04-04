@@ -80,7 +80,7 @@ SYSTEM_PROMPT = textwrap.dedent(
 
     {"action_type":"assign_session","session_id":"S1","day":0,"start_slot":0,"room_id":"R1"}
     {"action_type":"move_session","session_id":"S1","day":2,"start_slot":1,"room_id":"R2"}
-    {"action_type":"swap_sessions","session_id":"S1","room_id":"S2"}
+    {"action_type":"swap_sessions","session_id":"S1","target_session_id":"S2"}
     {"action_type":"unassign_session","session_id":"S1"}
     {"action_type":"submit_timetable"}
 
@@ -89,7 +89,7 @@ SYSTEM_PROMPT = textwrap.dedent(
     - start_slot: integer 0 to slots_per_day-1
     - assign_session: session must be unassigned
     - move_session: session must be already assigned
-    - swap_sessions: both sessions must be assigned (room_id = target session_id)
+    - swap_sessions: both sessions must be assigned (use target_session_id)
     - submit_timetable: ends episode, bonus if score >= 0.90"""
 ).strip()
 
@@ -190,7 +190,7 @@ def normalize_action(action: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             normalized[key] = action[key]
         return normalized
     if action_type == "swap_sessions":
-        for key in ("session_id", "room_id"):
+        for key in ("session_id", "target_session_id"):
             if key not in action:
                 return None
             normalized[key] = action[key]
@@ -311,7 +311,10 @@ async def main() -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
     if LOCAL_IMAGE_NAME:
-        env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
+        if LOCAL_IMAGE_NAME == "http://127.0.0.1:8000":
+            env = TimetablePlannerEnv(base_url=LOCAL_IMAGE_NAME)
+        else:
+            env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
     else:
         env = await TimetablePlannerEnv.from_env(
             HF_SPACE_URL,

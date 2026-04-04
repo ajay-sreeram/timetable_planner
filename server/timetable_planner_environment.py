@@ -286,9 +286,9 @@ class TimetablePlannerEnvironment(Environment):
 
         if action_type == "swap_sessions":
             session_id = self._coerce_str(action.session_id)
-            target_id = self._coerce_str(action.room_id)
+            target_id = self._coerce_str(action.target_session_id)
             if session_id is None or target_id is None:
-                return None, "swap_sessions requires session_id and room_id (as target session id)"
+                return None, "swap_sessions requires session_id and target_session_id"
             normalized["session_id"] = session_id
             normalized["target_session_id"] = target_id
             return normalized, None
@@ -545,4 +545,3 @@ class TimetablePlannerEnvironment(Environment):
             action_error=action_error,
             action_penalty=action_penalty,
         )
-

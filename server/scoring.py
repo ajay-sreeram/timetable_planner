@@ -188,21 +188,27 @@ def compute_compactness_score(
         teacher_slots.setdefault(session["teacher_id"], {}).setdefault(day, set()).update(slots)
         group_slots.setdefault(session["group_id"], {}).setdefault(day, set()).update(slots)
 
-    total_gaps = 0
+    total_score = 0.0
+    scored_days = 0
     for slots_by_day in list(teacher_slots.values()) + list(group_slots.values()):
         for day in range(day_count):
             slots = sorted(slots_by_day.get(day, set()))
             if len(slots) < 2:
                 continue
+            gaps = 0
             for current, nxt in zip(slots, slots[1:]):
-                gap = max(0, nxt - current - 1)
-                total_gaps += gap
+                gaps += max(0, nxt - current - 1)
+            max_gap = max(0, slots_per_day - len(slots))
+            if max_gap == 0:
+                day_score = 1.0
+            else:
+                day_score = max(0.0, 1.0 - min(1.0, gaps / max_gap))
+            total_score += day_score
+            scored_days += 1
 
-    max_gap_per_day = max(0, slots_per_day - 2)
-    max_total = max_gap_per_day * day_count * (len(teachers) + len(groups))
-    if max_total == 0:
+    if scored_days == 0:
         return 1.0
-    return max(0.0, 1.0 - min(1.0, total_gaps / max_total))
+    return total_score / scored_days
 
 
 def compute_room_fit_score(
@@ -224,7 +230,6 @@ def compute_room_fit_score(
         type_ok = room.get("room_type") in session.get("valid_room_types", [])
         capacity_ok = capacity >= required
         if not type_ok or not capacity_ok:
-            scores.append(0.0)
             continue
         waste = max(0, capacity - required)
         waste_score = 1.0 - min(1.0, waste / max(1, capacity))
@@ -242,19 +247,22 @@ def compute_stability_score(
     if not baseline_assignments:
         return 1.0
 
-    unchanged = 0
+    total_score = 0.0
     for session_id, baseline in baseline_assignments.items():
         current = assignments.get(session_id)
         if not current:
-            continue
-        if (
+            continue_score = 0.0
+        elif (
             current["day"] == baseline["day"]
             and current["start_slot"] == baseline["start_slot"]
             and current["room_id"] == baseline["room_id"]
         ):
-            unchanged += 1
+            continue_score = 1.0
+        else:
+            continue_score = 0.5
+        total_score += continue_score
 
-    return unchanged / len(baseline_assignments)
+    return total_score / len(baseline_assignments)
 
 
 def compute_preference_score(

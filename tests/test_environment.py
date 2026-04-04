@@ -178,7 +178,7 @@ class TestStep:
             action_type="assign_session", session_id=s2, day=1, start_slot=0, room_id=r2,
         ))
         obs3 = env.step(TimetablePlannerAction(
-            action_type="swap_sessions", session_id=s1, room_id=s2,
+            action_type="swap_sessions", session_id=s1, target_session_id=s2,
         ))
         assert obs3.action_error is None
 
@@ -189,7 +189,7 @@ class TestStep:
         s1 = obs.unscheduled_sessions[0]
         s2 = obs.unscheduled_sessions[1]
         obs2 = env.step(TimetablePlannerAction(
-            action_type="swap_sessions", session_id=s1, room_id=s2,
+            action_type="swap_sessions", session_id=s1, target_session_id=s2,
         ))
         assert obs2.action_error is not None
 
