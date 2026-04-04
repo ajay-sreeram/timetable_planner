@@ -73,6 +73,11 @@ Each step returns:
 
 The environment provides raw state and reward only — no strategy hints. The agent must learn from the `conflict_summary` counts and `score_breakdown` sub-scores which actions improve the timetable.
 
+Availability semantics:
+- `available_slots` is always present for teachers/rooms; only listed slots are allowed.
+- `preferred_slots` is a soft preference; if it matches `available_slots`, there is no extra preference.
+- `available_slots` and `preferred_slots` keys use day labels from `grid.days` (e.g., Mon, Tue).
+
 ## Tasks
 
 The environment includes 12 hand-crafted scenarios (including `medium_lab_block_v1` and `hard_room_outage_v1`) plus 6 procedurally generated ones (deterministic seeds). Scenarios cycle round-robin on each `reset()`.

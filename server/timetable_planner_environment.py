@@ -211,8 +211,30 @@ class TimetablePlannerEnvironment(Environment):
             scenario.get("initial_assignments", [])
         )
 
+        self._ensure_availability_defaults()
+
         if scenario.get("task_name") == "hard":
             self._apply_disruption(scenario.get("disruption"))
+
+    def _ensure_availability_defaults(self) -> None:
+        grid = self._scenario.get("grid", {})
+        day_count = len(grid.get("days", []))
+        slots_per_day = grid.get("slots_per_day", 0)
+
+        def full_slots() -> Dict[str, List[int]]:
+            return {str(day): list(range(slots_per_day)) for day in range(day_count)}
+
+        for teacher in self._teachers.values():
+            if teacher.get("available_slots") is None:
+                teacher["available_slots"] = full_slots()
+            if teacher.get("preferred_slots") is None:
+                teacher["preferred_slots"] = {
+                    day: list(slots) for day, slots in teacher["available_slots"].items()
+                }
+
+        for room in self._rooms.values():
+            if room.get("available_slots") is None:
+                room["available_slots"] = full_slots()
 
     def _apply_disruption(self, disruption: Any) -> None:
         if not disruption:
@@ -244,6 +266,10 @@ class TimetablePlannerEnvironment(Environment):
         remove_slots = parse_available_slots(slots, day_count, slots_per_day)
         updated = current_slots - remove_slots
         entity["available_slots"] = self._slots_to_dict(updated)
+        pref_raw = entity.get("preferred_slots")
+        if pref_raw is not None:
+            pref_slots = parse_available_slots(pref_raw, day_count, slots_per_day)
+            entity["preferred_slots"] = self._slots_to_dict(pref_slots & updated)
 
     def _slots_to_dict(self, slots: set[Tuple[int, int]]) -> Dict[str, List[int]]:
         by_day: Dict[str, List[int]] = {}
@@ -520,6 +546,33 @@ class TimetablePlannerEnvironment(Environment):
         )
 
         grid_data = self._scenario.get("grid", {})
+        day_labels = list(grid_data.get("days", []))
+
+        def _format_slots(slots: Any) -> Any:
+            if not isinstance(slots, dict) or not day_labels:
+                return slots
+            formatted: Dict[str, List[int]] = {}
+            # Preserve day label order when possible.
+            index_map = {str(i): label for i, label in enumerate(day_labels)}
+            for key, values in slots.items():
+                label = index_map.get(str(key), str(key))
+                formatted[label] = list(values)
+            ordered: Dict[str, List[int]] = {}
+            for label in day_labels:
+                if label in formatted:
+                    ordered[label] = formatted[label]
+            for key, values in formatted.items():
+                if key not in ordered:
+                    ordered[key] = values
+            return ordered
+
+        def _format_entity(entity: Dict[str, Any]) -> Dict[str, Any]:
+            out = dict(entity)
+            if "available_slots" in out:
+                out["available_slots"] = _format_slots(out.get("available_slots"))
+            if "preferred_slots" in out:
+                out["preferred_slots"] = _format_slots(out.get("preferred_slots"))
+            return out
 
         baseline = sorted(
             [dict(a) for a in self._baseline_assignments.values()],
@@ -530,9 +583,9 @@ class TimetablePlannerEnvironment(Environment):
             task_name=self._scenario.get("task_name", ""),
             scenario_id=self._scenario.get("scenario_id", ""),
             grid=grid_data,
-            teachers=list(self._teachers.values()),
+            teachers=[_format_entity(t) for t in self._teachers.values()],
             groups=list(self._groups.values()),
-            rooms=list(self._rooms.values()),
+            rooms=[_format_entity(r) for r in self._rooms.values()],
             sessions=self._sessions_list,
             current_timetable=timetable,
             baseline_timetable=baseline,

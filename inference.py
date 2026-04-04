@@ -90,7 +90,10 @@ SYSTEM_PROMPT = textwrap.dedent(
     - assign_session: session must be unassigned
     - move_session: session must be already assigned
     - swap_sessions: both sessions must be assigned (use target_session_id)
-    - submit_timetable: ends episode, bonus if score >= 0.90"""
+    - submit_timetable: ends episode, bonus if score >= 0.90
+
+    Slot semantics: availability is hard; preferences are soft (if preferred == available, there is no extra preference).
+    """
 ).strip()
 
 

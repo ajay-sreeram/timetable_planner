@@ -279,21 +279,35 @@ def compute_preference_score(
     if not assignments:
         return 0.0
 
+    def _slots_from(raw: Any) -> set[Slot]:
+        slots: set[Slot] = set()
+        if isinstance(raw, dict):
+            for day_key, slot_list in raw.items():
+                for s in slot_list:
+                    slots.add((int(day_key), int(s)))
+        return slots
+
     scores: List[float] = []
     for session_id, assignment in assignments.items():
         session = sessions.get(session_id)
         if not session:
             continue
         teacher = teachers.get(session["teacher_id"])
-        if not teacher or teacher.get("preferred_slots") is None:
+        if not teacher:
             scores.append(1.0)
             continue
         pref_raw = teacher["preferred_slots"]
-        pref: set[Slot] = set()
-        if isinstance(pref_raw, dict):
-            for day_key, slot_list in pref_raw.items():
-                for s in slot_list:
-                    pref.add((int(day_key), int(s)))
+        if pref_raw is None or (isinstance(pref_raw, dict) and len(pref_raw) == 0):
+            scores.append(1.0)
+            continue
+
+        pref = _slots_from(pref_raw)
+        avail_raw = teacher.get("available_slots")
+        if avail_raw is not None:
+            avail = _slots_from(avail_raw)
+            if pref == avail:
+                scores.append(1.0)
+                continue
 
         duration = session.get("duration_in_slots", 1)
         day = assignment["day"]

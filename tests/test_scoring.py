@@ -210,6 +210,18 @@ class TestNewSubScores:
         assignments = {"s1": {"session_id": "s1", "day": 0, "start_slot": 0}}
         assert compute_preference_score(assignments, sessions, teachers) == 0.5
 
+    def test_preference_pref_equals_avail(self):
+        sessions = {"s1": {"session_id": "s1", "teacher_id": "T1", "duration_in_slots": 1}}
+        teachers = {
+            "T1": {
+                "teacher_id": "T1",
+                "available_slots": {"0": [0, 1]},
+                "preferred_slots": {"0": [0, 1]},
+            }
+        }
+        assignments = {"s1": {"session_id": "s1", "day": 0, "start_slot": 1}}
+        assert compute_preference_score(assignments, sessions, teachers) == 1.0
+
     def test_daily_balance_even(self):
         assignments = {
             "s1": {"day": 0}, "s2": {"day": 1}, "s3": {"day": 2},
