@@ -308,7 +308,13 @@ def get_model_action(
 async def main() -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
-    env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
+    if LOCAL_IMAGE_NAME:
+        env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
+    else:
+        env = await TimetablePlannerEnv.from_env(
+            "https://huggingface.co/spaces/sreeramajay/timetable_planner-env",
+            use_docker=False,
+        )
 
     history: List[str] = []
     rewards: List[float] = []
