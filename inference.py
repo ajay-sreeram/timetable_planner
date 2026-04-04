@@ -8,7 +8,7 @@ MANDATORY
     API_BASE_URL   The API endpoint for the LLM.
     MODEL_NAME     The model identifier to use for inference.
     HF_TOKEN       Your Hugging Face / API key.
-    IMAGE_NAME     The Docker image name for the environment.
+    LOCAL_IMAGE_NAME     The Docker image name for the environment.
 
 - Defaults are set only for API_BASE_URL and MODEL_NAME
     (and should reflect your active inference setup):
@@ -48,7 +48,7 @@ from openai import OpenAI
 from client import TimetablePlannerEnv
 from models import TimetablePlannerAction
 
-IMAGE_NAME = os.getenv("IMAGE_NAME")
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 
 API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
@@ -308,7 +308,7 @@ def get_model_action(
 async def main() -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
 
-    env = await TimetablePlannerEnv.from_docker_image(IMAGE_NAME)
+    env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
 
     history: List[str] = []
     rewards: List[float] = []
