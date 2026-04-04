@@ -1,0 +1,7 @@
+spec_version: 1
+name: timetable_planner
+type: space
+runtime: fastapi
+app: server.app:app
+port: 8000
+
