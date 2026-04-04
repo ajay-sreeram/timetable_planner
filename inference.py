@@ -48,6 +48,8 @@ from openai import OpenAI
 from client import TimetablePlannerEnv
 from models import TimetablePlannerAction
 
+HF_SPACE_URL = "https://huggingface.co/spaces/sreeramajay/timetable_planner-env"
+
 LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 
@@ -312,7 +314,7 @@ async def main() -> None:
         env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
     else:
         env = await TimetablePlannerEnv.from_env(
-            "https://huggingface.co/spaces/sreeramajay/timetable_planner-env",
+            HF_SPACE_URL,
             use_docker=False,
         )
 
