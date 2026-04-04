@@ -420,6 +420,16 @@ class TimetablePlannerEnvironment(Environment):
                 return False, False, f"session {sid_b} is not assigned"
             if sid_a == sid_b:
                 return True, True, None
+            grid = self._scenario.get("grid", {})
+            slots_per_day = grid.get("slots_per_day", 0)
+            a_assignment = self._assignments[sid_a]
+            b_assignment = self._assignments[sid_b]
+            a_duration = self._sessions[sid_a].get("duration_in_slots", 1)
+            b_duration = self._sessions[sid_b].get("duration_in_slots", 1)
+            if a_assignment["start_slot"] + b_duration > slots_per_day:
+                return False, False, "swap target slot is out of range for target duration"
+            if b_assignment["start_slot"] + a_duration > slots_per_day:
+                return False, False, "swap target slot is out of range for source duration"
             return True, False, None
 
         if action_type == "unassign_session":

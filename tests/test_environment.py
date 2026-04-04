@@ -201,6 +201,28 @@ class TestStep:
         ))
         assert obs.action_error is not None
 
+    def test_swap_duration_out_of_bounds(self, env):
+        obs = env.reset()
+        if len(obs.unscheduled_sessions) < 2:
+            return
+        s1 = obs.unscheduled_sessions[0]
+        s2 = obs.unscheduled_sessions[1]
+        # Force one session to be long to validate bounds on swap.
+        env._sessions[s1]["duration_in_slots"] = 2
+        env._sessions[s2]["duration_in_slots"] = 1
+        room_id = obs.rooms[0].room_id
+        slots_per_day = obs.grid.slots_per_day
+        env.step(TimetablePlannerAction(
+            action_type="assign_session", session_id=s1, day=0, start_slot=slots_per_day - 2, room_id=room_id,
+        ))
+        env.step(TimetablePlannerAction(
+            action_type="assign_session", session_id=s2, day=0, start_slot=slots_per_day - 1, room_id=room_id,
+        ))
+        obs2 = env.step(TimetablePlannerAction(
+            action_type="swap_sessions", session_id=s1, target_session_id=s2,
+        ))
+        assert obs2.action_error is not None
+
     def test_day_out_of_range(self, env):
         obs = env.reset()
         if not obs.unscheduled_sessions:
