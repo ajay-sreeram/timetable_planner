@@ -82,12 +82,12 @@ Availability semantics:
 
 The environment includes 15 hand-crafted scenarios plus 8 procedurally generated ones (deterministic seeds), for **23 individually addressable benchmarks** across 4 difficulty levels.
 
-| Difficulty | Hand-crafted IDs | Generated IDs | Step budget |
-|---|---|---|---|
-| **Easy** | `easy_1` … `easy_4` | `gen_easy_1001`, `gen_easy_1002` | 20–25 |
-| **Medium** | `medium_1` … `medium_5` | `gen_medium_2001`, `gen_medium_2002` | 30–35 |
-| **Hard** | `hard_1` … `hard_4` | `gen_hard_3001`, `gen_hard_3002` | 40–45 |
-| **Expert** | `expert_1`, `expert_2` | `gen_expert_4001`, `gen_expert_4002` | 50–55 |
+| Difficulty | Hand-crafted IDs | Generated IDs | Budget | Overview |
+|---|---|---|---|---|
+| **Easy** | `easy_1` … `easy_4` | `gen_easy_1001`, `gen_easy_1002` | 20–25 | Overlap-only constraints, all slots available, 3–4 teachers, lecture + lab rooms |
+| **Medium** | `medium_1` … `medium_5` | `gen_medium_2001`, `gen_medium_2002` | 30–35 | Adds room type/capacity, teacher/room availability windows, and teacher preferred slots |
+| **Hard** | `hard_1` … `hard_4` | `gen_hard_3001`, `gen_hard_3002` | 40–45 | Starts from a valid baseline timetable, then applies a disruption; scored on stability |
+| **Expert** | `expert_1`, `expert_2` | `gen_expert_4001`, `gen_expert_4002` | 50–55 | 6 slots/day, multi-slot sessions, 4 room types, tight availability, all scoring active |
 
 ### Selecting a scenario
 
@@ -98,13 +98,6 @@ env.reset(scenario_id="hard_4")      # exact scenario by ID
 ```
 
 If both `scenario_id` and `task_name` are provided, `scenario_id` takes precedence.
-
-### Difficulty levels
-
-- **Easy**: overlap constraints only, all slots available
-- **Medium**: adds room type/capacity, teacher/room availability, and teacher preferred slots (soft constraint)
-- **Hard**: starts from a valid baseline, then applies a disruption (teacher/room unavailable, or new session added); scored on stability vs. baseline
-- **Expert**: 6 slots/day, multi-slot sessions, tight availability across all entities, all scoring dimensions active with high stability weight
 
 ## Scoring
 
