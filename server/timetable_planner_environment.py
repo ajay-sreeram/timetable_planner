@@ -91,15 +91,30 @@ class TimetablePlannerEnvironment(Environment):
         task_name: Optional[str] = None,
         **kwargs: Any,
     ) -> TimetablePlannerObservation:
-        self._state = State(
-            episode_id=episode_id or str(uuid4()), step_count=0
-        )
+        self._state = State(episode_id=episode_id or str(uuid4()), step_count=0)
         self._reset_count += 1
 
-        self._load_scenario(
-            scenario_id=scenario_id.strip() if scenario_id else None,
-            task_name=task_name.lower().strip() if task_name else None,
-        )
+        try:
+            self._load_scenario(
+                scenario_id=(
+                    scenario_id.strip()
+                    if isinstance(scenario_id, str) and scenario_id.strip()
+                    else None
+                ),
+                task_name=(
+                    task_name.lower().strip()
+                    if isinstance(task_name, str) and task_name.strip()
+                    else None
+                ),
+            )
+        except (ValueError, KeyError, TypeError):
+            logger.warning(
+                "Invalid reset params scenario_id=%r task_name=%r — falling back to next_scenario",
+                scenario_id,
+                task_name,
+            )
+            self._load_scenario()
+
         self._previous_score = 0.0
 
         conflicts, score_breakdown = self._evaluate()
@@ -128,6 +143,10 @@ class TimetablePlannerEnvironment(Environment):
         timeout_s: Optional[float] = None,
         **kwargs: Any,
     ) -> TimetablePlannerObservation:
+        if not self._scenario:
+            logger.warning("step() called before reset() — auto-resetting")
+            self.reset()
+
         self._state.step_count += 1
 
         if self._remaining_steps <= 0:
