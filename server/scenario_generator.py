@@ -59,7 +59,7 @@ def generate_scenario(
         "initial_assignments": [],
     }
 
-    if task_name == "hard":
+    if task_name in {"hard", "expert"}:
         baseline = _build_greedy_baseline(
             sessions, teachers, rooms, day_count, slots_per_day, rng,
         )
@@ -78,6 +78,9 @@ def _difficulty_defaults(task_name: str) -> Dict[str, int]:
     if task_name == "medium":
         return {"teachers": 5, "groups": 5, "rooms": 6, "sessions": 18,
                 "slots_per_day": 5, "step_budget": 35}
+    if task_name == "expert":
+        return {"teachers": 7, "groups": 7, "rooms": 8, "sessions": 24,
+                "slots_per_day": 6, "step_budget": 55}
     return {"teachers": 6, "groups": 6, "rooms": 7, "sessions": 20,
             "slots_per_day": 5, "step_budget": 45}
 

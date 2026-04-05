@@ -8,7 +8,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import uuid4
 
 from openenv.core.env_server.interfaces import Environment
@@ -68,6 +68,7 @@ class TimetablePlannerEnvironment(Environment):
     SUPPORTS_CONCURRENT_SESSIONS: bool = True
 
     def __init__(self) -> None:
+        super().__init__()
         self._state = State(episode_id=str(uuid4()), step_count=0)
         self._reset_count = 0
         self._repository = build_repository()
@@ -82,11 +83,23 @@ class TimetablePlannerEnvironment(Environment):
         self._remaining_steps = 0
         self._previous_score = 0.0
 
-    def reset(self) -> TimetablePlannerObservation:
-        self._state = State(episode_id=str(uuid4()), step_count=0)
+    def reset(
+        self,
+        seed: Optional[int] = None,
+        episode_id: Optional[str] = None,
+        scenario_id: Optional[str] = None,
+        task_name: Optional[str] = None,
+        **kwargs: Any,
+    ) -> TimetablePlannerObservation:
+        self._state = State(
+            episode_id=episode_id or str(uuid4()), step_count=0
+        )
         self._reset_count += 1
 
-        self._load_scenario()
+        self._load_scenario(
+            scenario_id=scenario_id.strip() if scenario_id else None,
+            task_name=task_name.lower().strip() if task_name else None,
+        )
         self._previous_score = 0.0
 
         conflicts, score_breakdown = self._evaluate()
@@ -109,7 +122,12 @@ class TimetablePlannerEnvironment(Environment):
             done=False,
         )
 
-    def step(self, action: TimetablePlannerAction) -> TimetablePlannerObservation:  # type: ignore[override]
+    def step(
+        self,
+        action: TimetablePlannerAction,
+        timeout_s: Optional[float] = None,
+        **kwargs: Any,
+    ) -> TimetablePlannerObservation:
         self._state.step_count += 1
 
         if self._remaining_steps <= 0:
@@ -160,10 +178,14 @@ class TimetablePlannerEnvironment(Environment):
         self._previous_score = score
 
         if _LOG_EVERY_STEP:
-            action_log = normalized_action if normalized_action else {"action_type": "invalid"}
+            action_log = (
+                normalized_action if normalized_action else {"action_type": "invalid"}
+            )
             if action_log.get("action_type") in {"assign_session", "move_session"}:
                 session_id = action_log.get("session_id")
-                duration = self._sessions.get(session_id, {}).get("duration_in_slots", 1)
+                duration = self._sessions.get(session_id, {}).get(
+                    "duration_in_slots", 1
+                )
                 action_log = dict(action_log)
                 action_log["duration_in_slots"] = duration
             logger.info(
@@ -192,8 +214,17 @@ class TimetablePlannerEnvironment(Environment):
     def state(self) -> State:
         return self._state
 
-    def _load_scenario(self) -> None:
-        scenario = self._repository.next_scenario()
+    def _load_scenario(
+        self,
+        scenario_id: Optional[str] = None,
+        task_name: Optional[str] = None,
+    ) -> None:
+        if scenario_id:
+            scenario = self._repository.get_scenario(scenario_id)
+        elif task_name:
+            scenario = self._repository.first_scenario_for_task(task_name)
+        else:
+            scenario = self._repository.next_scenario()
         self._scenario = scenario
         self._remaining_steps = int(scenario.get("step_budget", 30))
 
@@ -213,7 +244,7 @@ class TimetablePlannerEnvironment(Environment):
 
         self._ensure_availability_defaults()
 
-        if scenario.get("task_name") == "hard":
+        if scenario.get("task_name") in {"hard", "expert"}:
             self._apply_disruption(scenario.get("disruption"))
 
     def _ensure_availability_defaults(self) -> None:
@@ -229,7 +260,8 @@ class TimetablePlannerEnvironment(Environment):
                 teacher["available_slots"] = full_slots()
             if teacher.get("preferred_slots") is None:
                 teacher["preferred_slots"] = {
-                    day: list(slots) for day, slots in teacher["available_slots"].items()
+                    day: list(slots)
+                    for day, slots in teacher["available_slots"].items()
                 }
 
         for room in self._rooms.values():
@@ -262,7 +294,9 @@ class TimetablePlannerEnvironment(Environment):
         grid = self._scenario.get("grid", {})
         day_count = len(grid.get("days", []))
         slots_per_day = grid.get("slots_per_day", 0)
-        current_slots = parse_available_slots(entity.get("available_slots"), day_count, slots_per_day)
+        current_slots = parse_available_slots(
+            entity.get("available_slots"), day_count, slots_per_day
+        )
         remove_slots = parse_available_slots(slots, day_count, slots_per_day)
         updated = current_slots - remove_slots
         entity["available_slots"] = self._slots_to_dict(updated)
@@ -294,10 +328,16 @@ class TimetablePlannerEnvironment(Environment):
             room_id = self._coerce_str(action.room_id)
             day = self._coerce_day(action.day)
             start_slot = self._coerce_int(action.start_slot)
-            missing = [k for k, v in [("session_id", session_id),
-                                       ("day (0-based int or name like Mon)", day),
-                                       ("start_slot", start_slot),
-                                       ("room_id", room_id)] if v is None]
+            missing = [
+                k
+                for k, v in [
+                    ("session_id", session_id),
+                    ("day (0-based int or name like Mon)", day),
+                    ("start_slot", start_slot),
+                    ("room_id", room_id),
+                ]
+                if v is None
+            ]
             if missing:
                 return None, f"missing required fields: {', '.join(missing)}"
             normalized.update(
@@ -393,9 +433,17 @@ class TimetablePlannerEnvironment(Environment):
 
             already_assigned = session_id in self._assignments
             if action_type == "assign_session" and already_assigned:
-                return False, False, "session already assigned; use move_session to relocate"
+                return (
+                    False,
+                    False,
+                    "session already assigned; use move_session to relocate",
+                )
             if action_type == "move_session" and not already_assigned:
-                return False, False, "session not assigned yet; use assign_session first"
+                return (
+                    False,
+                    False,
+                    "session not assigned yet; use assign_session first",
+                )
 
             existing = self._assignments.get(session_id)
             if (
@@ -427,9 +475,17 @@ class TimetablePlannerEnvironment(Environment):
             a_duration = self._sessions[sid_a].get("duration_in_slots", 1)
             b_duration = self._sessions[sid_b].get("duration_in_slots", 1)
             if a_assignment["start_slot"] + b_duration > slots_per_day:
-                return False, False, "swap target slot is out of range for target duration"
+                return (
+                    False,
+                    False,
+                    "swap target slot is out of range for target duration",
+                )
             if b_assignment["start_slot"] + a_duration > slots_per_day:
-                return False, False, "swap target slot is out of range for source duration"
+                return (
+                    False,
+                    False,
+                    "swap target slot is out of range for source duration",
+                )
             return True, False, None
 
         if action_type == "unassign_session":
@@ -471,7 +527,9 @@ class TimetablePlannerEnvironment(Environment):
         elif action_type == "unassign_session":
             self._assignments.pop(action["session_id"], None)
 
-    def _build_assignment_map(self, assignments: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    def _build_assignment_map(
+        self, assignments: List[Dict[str, Any]]
+    ) -> Dict[str, Dict[str, Any]]:
         return {item["session_id"]: dict(item) for item in assignments}
 
     def _evaluate(self) -> Tuple[Dict[str, int], Dict[str, float]]:
@@ -499,7 +557,11 @@ class TimetablePlannerEnvironment(Environment):
         )
         stability_score = compute_stability_score(
             self._assignments,
-            self._baseline_assignments if self._scenario.get("task_name") == "hard" else {},
+            (
+                self._baseline_assignments
+                if self._scenario.get("task_name") in {"hard", "expert"}
+                else {}
+            ),
         )
         preference_score = compute_preference_score(
             self._assignments,
@@ -546,7 +608,8 @@ class TimetablePlannerEnvironment(Environment):
             [
                 session_id
                 for session_id, session in self._sessions.items()
-                if session.get("must_schedule", True) and session_id not in self._assignments
+                if session.get("must_schedule", True)
+                and session_id not in self._assignments
             ]
         )
 
@@ -584,10 +647,14 @@ class TimetablePlannerEnvironment(Environment):
                 out["preferred_slots"] = _format_slots(out.get("preferred_slots"))
             return out
 
-        baseline = sorted(
-            [dict(a) for a in self._baseline_assignments.values()],
-            key=lambda item: (item["day"], item["start_slot"], item["room_id"]),
-        ) if self._baseline_assignments else []
+        baseline = (
+            sorted(
+                [dict(a) for a in self._baseline_assignments.values()],
+                key=lambda item: (item["day"], item["start_slot"], item["room_id"]),
+            )
+            if self._baseline_assignments
+            else []
+        )
 
         return TimetablePlannerObservation(
             task_name=self._scenario.get("task_name", ""),

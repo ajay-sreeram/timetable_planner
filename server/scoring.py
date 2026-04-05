@@ -132,7 +132,7 @@ def compute_hard_constraint_score(
     total_assigned_slots: int,
 ) -> float:
     active_types = ["teacher_overlap", "group_overlap", "room_overlap"]
-    if task_name in {"medium", "hard"}:
+    if task_name in {"medium", "hard", "expert"}:
         active_types += [
             "room_capacity_violation",
             "room_type_violation",
@@ -384,6 +384,16 @@ def compute_score_breakdown(
             + 0.20 * coverage_score
             + 0.10 * compactness_score
             + 0.10 * room_fit_score
+            + 0.10 * preference_score
+            + 0.10 * daily_balance_score
+        )
+    elif task_name == "expert":
+        overall = (
+            0.25 * hard_constraint_score
+            + 0.15 * coverage_score
+            + 0.10 * compactness_score
+            + 0.10 * room_fit_score
+            + 0.20 * stability_score
             + 0.10 * preference_score
             + 0.10 * daily_balance_score
         )

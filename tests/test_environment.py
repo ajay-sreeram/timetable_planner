@@ -20,7 +20,7 @@ def env():
 class TestReset:
     def test_reset_returns_observation(self, env):
         obs = env.reset()
-        assert obs.task_name in {"easy", "medium", "hard"}
+        assert obs.task_name in {"easy", "medium", "hard", "expert"}
         assert obs.done is False
         assert obs.reward == 0.0
         assert obs.remaining_step_budget > 0
@@ -52,6 +52,20 @@ class TestReset:
     def test_reset_has_scenario_id(self, env):
         obs = env.reset()
         assert obs.scenario_id != ""
+
+    def test_reset_with_task_name(self, env):
+        obs = env.reset(task_name="hard")
+        assert obs.task_name == "hard"
+
+    def test_reset_with_scenario_id(self, env):
+        obs = env.reset(scenario_id="medium_3")
+        assert obs.scenario_id == "medium_3"
+        assert obs.task_name == "medium"
+
+    def test_reset_scenario_id_takes_precedence(self, env):
+        obs = env.reset(scenario_id="hard_1", task_name="easy")
+        assert obs.scenario_id == "hard_1"
+        assert obs.task_name == "hard"
 
 
 class TestStep:

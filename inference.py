@@ -335,7 +335,7 @@ async def main() -> None:
     log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        result = await env.reset()
+        result = await env.reset(task_name="easy")
         obs = result.observation
         debug(
             f"RESET: scenario={obs.scenario_id} task={obs.task_name} "

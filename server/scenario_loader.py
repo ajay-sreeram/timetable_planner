@@ -25,6 +25,8 @@ _GENERATED_SEEDS: List[Dict[str, Any]] = [
     {"task_name": "medium", "seed": 2002},
     {"task_name": "hard", "seed": 3001},
     {"task_name": "hard", "seed": 3002},
+    {"task_name": "expert", "seed": 4001},
+    {"task_name": "expert", "seed": 4002},
 ]
 
 
@@ -49,6 +51,42 @@ class ScenarioRepository:
         return normalize_scenario(
             generate_scenario(task_name=gen_cfg["task_name"], seed=gen_cfg["seed"])
         )
+
+    def get_scenario(self, scenario_id: str) -> Dict[str, Any]:
+        """Return the scenario with the given *scenario_id*.
+
+        Searches hand-crafted scenarios first, then generated seeds.
+        """
+        for scenario in self.scenarios:
+            if scenario.get("scenario_id") == scenario_id:
+                return copy.deepcopy(scenario)
+
+        for gen_cfg in self._gen_seeds:
+            gen_id = f"gen_{gen_cfg['task_name']}_{gen_cfg['seed']}"
+            if gen_id == scenario_id:
+                return normalize_scenario(
+                    generate_scenario(task_name=gen_cfg["task_name"], seed=gen_cfg["seed"])
+                )
+
+        raise ValueError(f"No scenario found for scenario_id={scenario_id!r}")
+
+    def first_scenario_for_task(self, task_name: str) -> Dict[str, Any]:
+        """Return the first scenario matching *task_name*.
+
+        Searches hand-crafted scenarios first, then falls back to the
+        first generated seed for the requested difficulty.
+        """
+        for scenario in self.scenarios:
+            if scenario.get("task_name") == task_name:
+                return copy.deepcopy(scenario)
+
+        for gen_cfg in self._gen_seeds:
+            if gen_cfg["task_name"] == task_name:
+                return normalize_scenario(
+                    generate_scenario(task_name=gen_cfg["task_name"], seed=gen_cfg["seed"])
+                )
+
+        raise ValueError(f"No scenario found for task_name={task_name!r}")
 
 
 def load_scenarios() -> List[Dict[str, Any]]:

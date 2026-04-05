@@ -526,6 +526,46 @@
       "initial_assignments": []
     },
     {
+      "scenario_id": "easy_4",
+      "task_name": "easy",
+      "grid": {
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        "slots_per_day": 4
+      },
+      "step_budget": 20,
+      "teachers": [
+        {"teacher_id": "T1"},
+        {"teacher_id": "T2"},
+        {"teacher_id": "T3"},
+        {"teacher_id": "T4"}
+      ],
+      "groups": [
+        {"group_id": "G1", "size": 22},
+        {"group_id": "G2", "size": 18},
+        {"group_id": "G3", "size": 26},
+        {"group_id": "G4", "size": 15}
+      ],
+      "rooms": [
+        {"room_id": "R1", "capacity": 30, "room_type": "lecture"},
+        {"room_id": "R2", "capacity": 26, "room_type": "lecture"},
+        {"room_id": "R3", "capacity": 20, "room_type": "lab"},
+        {"room_id": "R4", "capacity": 28, "room_type": "lab"}
+      ],
+      "sessions": [
+        {"session_id": "E4_S1",  "teacher_id": "T1", "group_id": "G1", "valid_room_types": ["lecture"], "required_capacity": 22, "must_schedule": true},
+        {"session_id": "E4_S2",  "teacher_id": "T1", "group_id": "G3", "valid_room_types": ["lecture"], "required_capacity": 26, "must_schedule": true},
+        {"session_id": "E4_S3",  "teacher_id": "T2", "group_id": "G2", "valid_room_types": ["lab"],     "required_capacity": 18, "must_schedule": true},
+        {"session_id": "E4_S4",  "teacher_id": "T2", "group_id": "G4", "valid_room_types": ["lecture"], "required_capacity": 15, "must_schedule": true},
+        {"session_id": "E4_S5",  "teacher_id": "T3", "group_id": "G1", "valid_room_types": ["lab"],     "required_capacity": 22, "must_schedule": true},
+        {"session_id": "E4_S6",  "teacher_id": "T3", "group_id": "G3", "valid_room_types": ["lecture"], "required_capacity": 26, "must_schedule": true},
+        {"session_id": "E4_S7",  "teacher_id": "T4", "group_id": "G2", "valid_room_types": ["lecture"], "required_capacity": 18, "must_schedule": true},
+        {"session_id": "E4_S8",  "teacher_id": "T4", "group_id": "G4", "valid_room_types": ["lab"],     "required_capacity": 15, "must_schedule": true},
+        {"session_id": "E4_S9",  "teacher_id": "T1", "group_id": "G4", "valid_room_types": ["lecture"], "required_capacity": 15, "must_schedule": true},
+        {"session_id": "E4_S10", "teacher_id": "T2", "group_id": "G1", "valid_room_types": ["lecture"], "required_capacity": 22, "must_schedule": false}
+      ],
+      "initial_assignments": []
+    },
+    {
       "scenario_id": "medium_1",
       "task_name": "medium",
       "grid": {
@@ -887,7 +927,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 20,
+          "required_capacity": 18,
           "must_schedule": true
         },
         {
@@ -1326,7 +1366,7 @@
           "valid_room_types": [
             "lab"
           ],
-          "required_capacity": 28,
+          "required_capacity": 26,
           "must_schedule": true
         },
         {
@@ -1366,7 +1406,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 24,
+          "required_capacity": 18,
           "must_schedule": true
         },
         {
@@ -1768,7 +1808,7 @@
           "valid_room_types": [
             "lab"
           ],
-          "required_capacity": 27,
+          "required_capacity": 24,
           "must_schedule": true
         },
         {
@@ -1808,7 +1848,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 27,
+          "required_capacity": 18,
           "must_schedule": true
         },
         {
@@ -2286,7 +2326,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 24,
+          "required_capacity": 20,
           "must_schedule": true
         },
         {
@@ -2336,7 +2376,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 24,
+          "required_capacity": 20,
           "must_schedule": true
         },
         {
@@ -2897,7 +2937,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 24,
+          "required_capacity": 20,
           "must_schedule": true
         },
         {
@@ -2947,7 +2987,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 24,
+          "required_capacity": 20,
           "must_schedule": true
         },
         {
@@ -3508,7 +3548,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 24,
+          "required_capacity": 20,
           "must_schedule": true
         },
         {
@@ -3558,7 +3598,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 24,
+          "required_capacity": 20,
           "must_schedule": true
         },
         {
@@ -4346,7 +4386,7 @@
           "valid_room_types": [
             "lab"
           ],
-          "required_capacity": 28,
+          "required_capacity": 26,
           "must_schedule": true
         },
         {
@@ -4366,7 +4406,7 @@
           "valid_room_types": [
             "seminar"
           ],
-          "required_capacity": 22,
+          "required_capacity": 20,
           "must_schedule": true
         },
         {
@@ -4434,7 +4474,7 @@
       "initial_assignments": []
     },
     {
-      "scenario_id": "medium_lab_block_v1",
+      "scenario_id": "medium_5",
       "task_name": "medium",
       "grid": {
         "days": [
@@ -4854,7 +4894,7 @@
       "initial_assignments": []
     },
     {
-      "scenario_id": "hard_room_outage_v1",
+      "scenario_id": "hard_4",
       "task_name": "hard",
       "grid": {
         "days": [
@@ -5367,6 +5407,210 @@
           ]
         }
       }
+    },
+    {
+      "scenario_id": "expert_1",
+      "task_name": "expert",
+      "grid": {
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        "slots_per_day": 6
+      },
+      "step_budget": 50,
+      "teachers": [
+        {
+          "teacher_id": "ET1",
+          "available_slots": {"0": [0,1,2], "1": [0,1], "2": [2,3,4,5], "3": [0,1,2], "4": [0,1]},
+          "preferred_slots": {"0": [0,1], "3": [0,1]}
+        },
+        {
+          "teacher_id": "ET2",
+          "available_slots": {"0": [1,2,3], "1": [2,3,4], "2": [0,1], "3": [3,4,5], "4": [2,3,4]},
+          "preferred_slots": {"1": [2,3], "3": [3,4]}
+        },
+        {
+          "teacher_id": "ET3",
+          "available_slots": {"0": [0,1], "1": [0,1,2,3], "2": [0,1,2], "4": [0,1,2,3]},
+          "preferred_slots": {"1": [0,1], "2": [0]}
+        },
+        {
+          "teacher_id": "ET4",
+          "available_slots": {"1": [1,2,3], "2": [3,4,5], "3": [0,1,2,3], "4": [1,2]},
+          "preferred_slots": {"3": [0,1], "2": [3,4]}
+        },
+        {
+          "teacher_id": "ET5",
+          "available_slots": {"0": [2,3,4,5], "2": [0,1,2], "3": [1,2], "4": [3,4,5]},
+          "preferred_slots": {"0": [2,3], "2": [0,1]}
+        },
+        {
+          "teacher_id": "ET6",
+          "available_slots": {"0": [0,1,2,3], "1": [0,1], "3": [0,1,2], "4": [0,1,2,3,4]},
+          "preferred_slots": {"0": [0,1], "4": [0,1]}
+        }
+      ],
+      "groups": [
+        {"group_id": "EG1", "size": 18},
+        {"group_id": "EG2", "size": 24},
+        {"group_id": "EG3", "size": 30},
+        {"group_id": "EG4", "size": 20},
+        {"group_id": "EG5", "size": 16}
+      ],
+      "rooms": [
+        {
+          "room_id": "ER1", "capacity": 35, "room_type": "lecture",
+          "available_slots": {"0": [0,1,2,3,4,5], "1": [0,1,2,3,4,5], "2": [0,1,2,3,4,5], "3": [0,1,2,3,4,5], "4": [0,1,2,3,4,5]}
+        },
+        {
+          "room_id": "ER2", "capacity": 26, "room_type": "lecture",
+          "available_slots": {"0": [0,1,2,3,4,5], "1": [0,1,2,3], "2": [0,1,2,3,4,5], "3": [0,1,2,3,4,5], "4": [0,1,2,3]}
+        },
+        {
+          "room_id": "ER3", "capacity": 24, "room_type": "lab",
+          "available_slots": {"0": [0,1,2,3], "1": [0,1,2,3,4,5], "2": [2,3,4,5], "3": [0,1,2,3]}
+        },
+        {
+          "room_id": "ER4", "capacity": 20, "room_type": "lab",
+          "available_slots": {"1": [0,1,2,3], "2": [0,1,2,3], "3": [2,3,4,5], "4": [0,1,2,3,4,5]}
+        },
+        {
+          "room_id": "ER5", "capacity": 18, "room_type": "seminar",
+          "available_slots": {"0": [2,3,4,5], "2": [0,1,2,3], "4": [0,1,2,3,4,5]}
+        },
+        {
+          "room_id": "ER6", "capacity": 22, "room_type": "seminar",
+          "available_slots": {"0": [0,1,2,3], "1": [2,3,4,5], "3": [0,1,2,3], "4": [2,3,4,5]}
+        }
+      ],
+      "sessions": [
+        {"session_id": "EX1_S1",  "teacher_id": "ET1", "group_id": "EG1", "valid_room_types": ["lecture"],  "required_capacity": 18, "must_schedule": true},
+        {"session_id": "EX1_S2",  "teacher_id": "ET1", "group_id": "EG2", "valid_room_types": ["lecture"],  "required_capacity": 24, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX1_S3",  "teacher_id": "ET1", "group_id": "EG3", "valid_room_types": ["lecture"],  "required_capacity": 30, "must_schedule": true},
+        {"session_id": "EX1_S4",  "teacher_id": "ET2", "group_id": "EG1", "valid_room_types": ["lab"],      "required_capacity": 18, "must_schedule": true},
+        {"session_id": "EX1_S5",  "teacher_id": "ET2", "group_id": "EG4", "valid_room_types": ["lecture"],  "required_capacity": 20, "must_schedule": true},
+        {"session_id": "EX1_S6",  "teacher_id": "ET2", "group_id": "EG2", "valid_room_types": ["lab"],      "required_capacity": 24, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX1_S7",  "teacher_id": "ET3", "group_id": "EG3", "valid_room_types": ["lecture"],  "required_capacity": 30, "must_schedule": true},
+        {"session_id": "EX1_S8",  "teacher_id": "ET3", "group_id": "EG5", "valid_room_types": ["seminar"],  "required_capacity": 16, "must_schedule": true},
+        {"session_id": "EX1_S9",  "teacher_id": "ET3", "group_id": "EG1", "valid_room_types": ["lab"],      "required_capacity": 18, "must_schedule": true},
+        {"session_id": "EX1_S10", "teacher_id": "ET4", "group_id": "EG2", "valid_room_types": ["seminar"],  "required_capacity": 22, "must_schedule": true},
+        {"session_id": "EX1_S11", "teacher_id": "ET4", "group_id": "EG4", "valid_room_types": ["lab"],      "required_capacity": 20, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX1_S12", "teacher_id": "ET4", "group_id": "EG3", "valid_room_types": ["lecture"],  "required_capacity": 30, "must_schedule": true},
+        {"session_id": "EX1_S13", "teacher_id": "ET5", "group_id": "EG5", "valid_room_types": ["seminar"],  "required_capacity": 16, "must_schedule": true},
+        {"session_id": "EX1_S14", "teacher_id": "ET5", "group_id": "EG1", "valid_room_types": ["lecture"],  "required_capacity": 18, "must_schedule": true},
+        {"session_id": "EX1_S15", "teacher_id": "ET5", "group_id": "EG4", "valid_room_types": ["seminar"],  "required_capacity": 20, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX1_S16", "teacher_id": "ET6", "group_id": "EG3", "valid_room_types": ["lecture"],  "required_capacity": 30, "must_schedule": true},
+        {"session_id": "EX1_S17", "teacher_id": "ET6", "group_id": "EG2", "valid_room_types": ["lab"],      "required_capacity": 24, "must_schedule": true},
+        {"session_id": "EX1_S18", "teacher_id": "ET6", "group_id": "EG5", "valid_room_types": ["seminar"],  "required_capacity": 16, "must_schedule": false}
+      ],
+      "initial_assignments": []
+    },
+    {
+      "scenario_id": "expert_2",
+      "task_name": "expert",
+      "grid": {
+        "days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        "slots_per_day": 6
+      },
+      "step_budget": 55,
+      "teachers": [
+        {
+          "teacher_id": "FT1",
+          "available_slots": {"0": [0,1,2,3], "2": [0,1,2], "3": [0,1], "4": [0,1,2]},
+          "preferred_slots": {"0": [0,1], "4": [0]}
+        },
+        {
+          "teacher_id": "FT2",
+          "available_slots": {"0": [2,3,4], "1": [0,1,2,3], "3": [2,3,4,5], "4": [1,2,3]},
+          "preferred_slots": {"1": [0,1], "3": [2,3]}
+        },
+        {
+          "teacher_id": "FT3",
+          "available_slots": {"1": [0,1,2], "2": [1,2,3,4], "3": [0,1,2], "4": [0,1]},
+          "preferred_slots": {"2": [1,2], "3": [0]}
+        },
+        {
+          "teacher_id": "FT4",
+          "available_slots": {"0": [0,1,2], "1": [3,4,5], "2": [0,1], "3": [3,4,5], "4": [3,4,5]},
+          "preferred_slots": {"3": [3,4], "4": [3,4]}
+        },
+        {
+          "teacher_id": "FT5",
+          "available_slots": {"0": [1,2,3], "1": [0,1], "2": [3,4,5], "4": [0,1,2,3,4,5]},
+          "preferred_slots": {"0": [1,2], "4": [0,1]}
+        },
+        {
+          "teacher_id": "FT6",
+          "available_slots": {"0": [4,5], "1": [1,2,3], "2": [0,1,2,3], "3": [0,1]},
+          "preferred_slots": {"2": [0,1], "1": [1]}
+        },
+        {
+          "teacher_id": "FT7",
+          "available_slots": {"0": [0,1], "2": [2,3,4,5], "3": [2,3,4], "4": [2,3,4,5]},
+          "preferred_slots": {"2": [2,3], "4": [2,3]}
+        }
+      ],
+      "groups": [
+        {"group_id": "FG1", "size": 20},
+        {"group_id": "FG2", "size": 26},
+        {"group_id": "FG3", "size": 22},
+        {"group_id": "FG4", "size": 18},
+        {"group_id": "FG5", "size": 30},
+        {"group_id": "FG6", "size": 16}
+      ],
+      "rooms": [
+        {
+          "room_id": "FR1", "capacity": 36, "room_type": "lecture",
+          "available_slots": {"0": [0,1,2,3,4,5], "1": [0,1,2,3,4,5], "2": [0,1,2,3,4,5], "3": [0,1,2,3,4,5], "4": [0,1,2,3,4,5]}
+        },
+        {
+          "room_id": "FR2", "capacity": 28, "room_type": "lecture",
+          "available_slots": {"0": [0,1,2,3,4,5], "1": [0,1,2,3], "2": [0,1,2,3,4,5], "3": [0,1,2,3,4,5], "4": [0,1,2,3,4,5]}
+        },
+        {
+          "room_id": "FR3", "capacity": 26, "room_type": "lab",
+          "available_slots": {"0": [0,1,2,3], "1": [0,1,2,3,4,5], "2": [2,3,4,5], "3": [0,1,2,3,4,5], "4": [0,1,2,3]}
+        },
+        {
+          "room_id": "FR4", "capacity": 22, "room_type": "lab",
+          "available_slots": {"1": [0,1,2,3,4,5], "2": [0,1,2,3], "3": [0,1,2,3], "4": [0,1,2,3,4,5]}
+        },
+        {
+          "room_id": "FR5", "capacity": 20, "room_type": "seminar",
+          "available_slots": {"0": [2,3,4,5], "1": [0,1,2,3], "2": [0,1,2,3,4,5], "4": [0,1,2,3,4,5]}
+        },
+        {
+          "room_id": "FR6", "capacity": 18, "room_type": "seminar",
+          "available_slots": {"0": [0,1,2,3], "2": [0,1,2,3], "3": [2,3,4,5], "4": [2,3,4,5]}
+        },
+        {
+          "room_id": "FR7", "capacity": 24, "room_type": "workshop",
+          "available_slots": {"0": [0,1,2,3], "1": [2,3,4,5], "3": [0,1,2,3], "4": [0,1,2,3]}
+        }
+      ],
+      "sessions": [
+        {"session_id": "EX2_S1",  "teacher_id": "FT1", "group_id": "FG1", "valid_room_types": ["lecture"],   "required_capacity": 20, "must_schedule": true},
+        {"session_id": "EX2_S2",  "teacher_id": "FT1", "group_id": "FG2", "valid_room_types": ["lecture"],   "required_capacity": 26, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX2_S3",  "teacher_id": "FT1", "group_id": "FG4", "valid_room_types": ["lab"],       "required_capacity": 18, "must_schedule": true},
+        {"session_id": "EX2_S4",  "teacher_id": "FT2", "group_id": "FG5", "valid_room_types": ["lecture"],   "required_capacity": 30, "must_schedule": true},
+        {"session_id": "EX2_S5",  "teacher_id": "FT2", "group_id": "FG3", "valid_room_types": ["lab"],       "required_capacity": 22, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX2_S6",  "teacher_id": "FT2", "group_id": "FG1", "valid_room_types": ["lecture"],   "required_capacity": 20, "must_schedule": true},
+        {"session_id": "EX2_S7",  "teacher_id": "FT3", "group_id": "FG2", "valid_room_types": ["lecture"],   "required_capacity": 26, "must_schedule": true},
+        {"session_id": "EX2_S8",  "teacher_id": "FT3", "group_id": "FG6", "valid_room_types": ["seminar"],   "required_capacity": 16, "must_schedule": true},
+        {"session_id": "EX2_S9",  "teacher_id": "FT3", "group_id": "FG4", "valid_room_types": ["lab"],       "required_capacity": 18, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX2_S10", "teacher_id": "FT4", "group_id": "FG5", "valid_room_types": ["lecture"],   "required_capacity": 30, "must_schedule": true},
+        {"session_id": "EX2_S11", "teacher_id": "FT4", "group_id": "FG3", "valid_room_types": ["seminar"],   "required_capacity": 20, "must_schedule": true},
+        {"session_id": "EX2_S12", "teacher_id": "FT4", "group_id": "FG1", "valid_room_types": ["workshop"],  "required_capacity": 20, "must_schedule": true},
+        {"session_id": "EX2_S13", "teacher_id": "FT5", "group_id": "FG2", "valid_room_types": ["lecture"],   "required_capacity": 26, "must_schedule": true},
+        {"session_id": "EX2_S14", "teacher_id": "FT5", "group_id": "FG6", "valid_room_types": ["seminar"],   "required_capacity": 16, "must_schedule": true},
+        {"session_id": "EX2_S15", "teacher_id": "FT5", "group_id": "FG4", "valid_room_types": ["lab"],       "required_capacity": 18, "must_schedule": true},
+        {"session_id": "EX2_S16", "teacher_id": "FT6", "group_id": "FG5", "valid_room_types": ["lecture"],   "required_capacity": 30, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX2_S17", "teacher_id": "FT6", "group_id": "FG3", "valid_room_types": ["lab"],       "required_capacity": 22, "must_schedule": true},
+        {"session_id": "EX2_S18", "teacher_id": "FT6", "group_id": "FG1", "valid_room_types": ["seminar"],   "required_capacity": 20, "must_schedule": true},
+        {"session_id": "EX2_S19", "teacher_id": "FT7", "group_id": "FG2", "valid_room_types": ["lecture"],   "required_capacity": 26, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX2_S20", "teacher_id": "FT7", "group_id": "FG6", "valid_room_types": ["seminar"],   "required_capacity": 16, "must_schedule": true},
+        {"session_id": "EX2_S21", "teacher_id": "FT7", "group_id": "FG4", "valid_room_types": ["workshop"],  "required_capacity": 18, "duration_in_slots": 2, "must_schedule": true},
+        {"session_id": "EX2_S22", "teacher_id": "FT7", "group_id": "FG3", "valid_room_types": ["lab"],       "required_capacity": 22, "must_schedule": false}
+      ],
+      "initial_assignments": []
     }
   ]
 }

@@ -88,6 +88,39 @@ class TestScenarioRepository:
         except ValueError:
             pass
 
+    def test_get_scenario_by_id(self):
+        repo = build_repository()
+        s = repo.get_scenario("easy_1")
+        assert s["scenario_id"] == "easy_1"
+        assert s["task_name"] == "easy"
+
+    def test_get_scenario_by_id_generated(self):
+        repo = build_repository()
+        s = repo.get_scenario("gen_medium_2001")
+        assert s["task_name"] == "medium"
+
+    def test_get_scenario_unknown_raises(self):
+        repo = build_repository()
+        try:
+            repo.get_scenario("nonexistent_99")
+            assert False, "Should have raised ValueError"
+        except ValueError:
+            pass
+
+    def test_first_scenario_for_task(self):
+        repo = build_repository()
+        for task in ("easy", "medium", "hard", "expert"):
+            s = repo.first_scenario_for_task(task)
+            assert s["task_name"] == task
+
+    def test_first_scenario_for_task_unknown_raises(self):
+        repo = build_repository()
+        try:
+            repo.first_scenario_for_task("nonexistent")
+            assert False, "Should have raised ValueError"
+        except ValueError:
+            pass
+
     def test_build_repository_includes_generated(self):
         repo = build_repository()
         seen_ids = set()
@@ -126,9 +159,15 @@ class TestGenerateScenario:
         assert s1["sessions"] == s2["sessions"]
         assert s1["teachers"] == s2["teachers"]
 
+    def test_expert_has_baseline_and_disruption(self):
+        s = generate_scenario("expert", seed=42)
+        assert "baseline_assignments" in s
+        assert "disruption" in s
+        assert len(s["baseline_assignments"]) > 0
+
     def test_all_must_schedule_sessions_are_feasible(self):
         for seed in range(50):
-            for task in ("easy", "medium", "hard"):
+            for task in ("easy", "medium", "hard", "expert"):
                 s = generate_scenario(task, seed=seed)
                 day_count = len(s["grid"]["days"])
                 spd = s["grid"]["slots_per_day"]

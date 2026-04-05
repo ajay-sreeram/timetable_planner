@@ -83,7 +83,7 @@ class Grid(BaseModel):
 class TimetablePlannerObservation(Observation):
     """Observation from the Timetable Planner environment."""
 
-    task_name: str = Field(default="", description="easy, medium, or hard")
+    task_name: str = Field(default="", description="easy, medium, hard, or expert")
     scenario_id: str = Field(default="", description="Identifier for the current scenario")
     grid: Grid = Field(default_factory=Grid, description="Day names and slots per day")
     teachers: List[Teacher] = Field(default_factory=list)
