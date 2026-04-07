@@ -51,8 +51,8 @@ _SUBMIT_BONUS_THRESHOLD = 0.90
 _SUBMIT_BONUS = 0.05
 
 _LOG_LEVEL = os.getenv("TIMETABLE_PLANNER_LOG_LEVEL", "INFO").upper()
-_LOG_EVERY_STEP = os.getenv("TIMETABLE_PLANNER_LOG_EVERY_STEP", "1") == "1"
-_LOG_ACTIONS = os.getenv("TIMETABLE_PLANNER_LOG_ACTIONS", "1") == "1"
+_LOG_EVERY_STEP = os.getenv("TIMETABLE_PLANNER_LOG_EVERY_STEP", "0") == "1"
+_LOG_ACTIONS = os.getenv("TIMETABLE_PLANNER_LOG_ACTIONS", "0") == "1"
 
 logger = logging.getLogger(__name__)
 if not logger.handlers:

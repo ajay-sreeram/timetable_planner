@@ -56,7 +56,7 @@ API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
 MODEL_NAME = os.getenv("MODEL_NAME") or "Qwen/Qwen2.5-72B-Instruct"
 
-TASK_NAME = os.getenv("TIMETABLE_PLANNER_TASK", "timetable-planning")
+TASK_NAMES = os.getenv("TIMETABLE_PLANNER_TASKS", "easy,medium,hard,expert").split(",")
 BENCHMARK = os.getenv("TIMETABLE_PLANNER_BENCHMARK", "timetable_planner")
 MAX_STEPS = 30
 TEMPERATURE = 0.3
@@ -306,24 +306,16 @@ def get_model_action(
 
 
 # ---------------------------------------------------------------------------
-# Main loop
+# Single-episode runner
 # ---------------------------------------------------------------------------
 
 
-async def main() -> None:
-    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
-
-    if LOCAL_IMAGE_NAME:
-        if LOCAL_IMAGE_NAME == "http://127.0.0.1:8000":
-            env = TimetablePlannerEnv(base_url=LOCAL_IMAGE_NAME)
-        else:
-            env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
-    else:
-        env = await TimetablePlannerEnv.from_env(
-            HF_SPACE_URL,
-            use_docker=False,
-        )
-
+async def run_episode(
+    env: Any,
+    client: OpenAI,
+    task_name: str,
+) -> None:
+    """Run one full episode for *task_name*, emitting [START] / [STEP]* / [END]."""
     history: List[str] = []
     rewards: List[float] = []
     steps_taken = 0
@@ -331,11 +323,12 @@ async def main() -> None:
     success = False
     last_reward = 0.0
     last_action: Optional[Dict[str, Any]] = None
+    obs = None
 
-    log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
+    log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        result = await env.reset(task_name="easy")
+        result = await env.reset(task_name=task_name)
         obs = result.observation
         debug(
             f"RESET: scenario={obs.scenario_id} task={obs.task_name} "
@@ -392,20 +385,42 @@ async def main() -> None:
             if done:
                 break
 
-        score = (
-            float(obs.score_breakdown.get("overall_score", 0.0))
-            if steps_taken > 0
-            else 0.0
-        )
-        score = min(max(score, 0.0), 1.0)
+        if obs is not None and steps_taken > 0:
+            score = float(obs.score_breakdown.get("overall_score", 0.0))
+            score = min(max(score, 0.0), 1.0)
         success = score >= SUCCESS_SCORE_THRESHOLD
 
+    finally:
+        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
+
+
+# ---------------------------------------------------------------------------
+# Main loop
+# ---------------------------------------------------------------------------
+
+
+async def main() -> None:
+    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+
+    if LOCAL_IMAGE_NAME:
+        if LOCAL_IMAGE_NAME == "http://127.0.0.1:8000":
+            env = TimetablePlannerEnv(base_url=LOCAL_IMAGE_NAME)
+        else:
+            env = await TimetablePlannerEnv.from_docker_image(LOCAL_IMAGE_NAME)
+    else:
+        env = await TimetablePlannerEnv.from_env(
+            HF_SPACE_URL,
+            use_docker=False,
+        )
+
+    try:
+        for task_name in TASK_NAMES:
+            await run_episode(env, client, task_name)
     finally:
         try:
             await env.close()
         except Exception as e:
             print(f"[DEBUG] env.close() error (cleanup): {e}", flush=True)
-        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
 
 
 if __name__ == "__main__":
